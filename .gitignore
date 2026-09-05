@@ -1,0 +1,39 @@
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+
+# ---- mydotfiles repo hygiene ----
+# nested git repos (each config keeps its own history; only files go in here)
+/.config/nvim/.git/
+/.config/wezterm/.git/
+# not config: bundled screenshots + wallpaper binaries
+/.config/wezterm/.github/
+/.config/wezterm/backdrops/
+# external tool: ml4w dotfiles (installed by its own installer — not mine)
+/.mydotfiles/
+# kitty is not part of the stack (wezterm is)
+/.config/kitty/
+
+# ---- AI tooling: watermark removal (user request) ----
+.claude/
+.agents/
+skills-lock.json
+AGENTS.md
+CLAUDE.md
+# tpm-managed tmux plugins (installed by tpm, not part of dotfiles)
+/.config/tmux/plugins/
+/.config/nvim/.git.bak-mydotfiles/
+/.config/wezterm/.git.bak-mydotfiles/
+# herdr runtime state (logs/sessions/release notes — regenerated; only real
+# config files are versioned)
+/.config/herdr/herdr-client.log
+/.config/herdr/herdr-server.log
+/.config/herdr/session.json
+/.config/herdr/release-notes.json
+/.config/herdr/.plugins.lock
+/.config/herdr/sessions/

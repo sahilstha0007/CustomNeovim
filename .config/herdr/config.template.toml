@@ -1,0 +1,41 @@
+# Auto-generated from config.template.toml by herdr-palette.sh on every
+# wallpaper sync — do not edit by hand. Edit the template instead, or run
+# ~/.config/herdr/herdr-palette.sh after changing it.
+#
+# Base theme is catppuccin (same design language as tmux/nvim: a stock
+# catppuccin base with the wallpaper overriding the same token subset).
+# theme.custom flips between latte (light wallpaper) and mocha (dark
+# wallpaper) values, so herdr's chrome re-themes with everything else.
+onboarding = false
+
+[theme]
+name = "catppuccin"
+
+[theme.custom]
+accent      = "@@ACCENT@@"
+panel_bg    = "@@PANEL_BG@@"
+surface0    = "@@SURFACE0@@"
+surface1    = "@@SURFACE1@@"
+surface_dim = "@@SURFACE_DIM@@"
+overlay0    = "@@OVERLAY0@@"
+overlay1    = "@@OVERLAY1@@"
+text        = "@@TEXT@@"
+subtext0    = "@@SUBTEXT0@@"
+mauve       = "@@MAUVE@@"
+green       = "@@GREEN@@"
+yellow      = "@@YELLOW@@"
+red         = "@@RED@@"
+blue        = "@@BLUE@@"
+teal        = "@@TEAL@@"
+peach       = "@@PEACH@@"
+
+# tmux-style prefix + window keys (tmux uses C-a with base-index 1).
+[keys]
+prefix = "ctrl+a"
+new_tab = "prefix+c"
+previous_tab = "prefix+p"
+next_tab = "prefix+n"
+switch_tab = "prefix+1..9"
+rename_tab = "prefix+comma"
+detach = "prefix+d"
+reload_config = "prefix+shift+r"
