@@ -218,21 +218,26 @@ function BackDrops:_gen_opts()
          -- display copy when cached (fast decode); original while warming
          source = { File = display_path(self.images[self.current_idx]) },
          horizontal_align = 'Center',
-         hsb = { brightness = 0.82, saturation = 1.0 },
+         hsb = { brightness = 0.72, saturation = 0.92 },
       })
       -- flat frost wash — the single knob that decides how much "glass"
-      -- vs. flat dark you get. 0.82 was the strong-dark readability pass;
-      -- user preference: FULL transparency — the wezterm window itself now
-      -- renders with window_background_opacity (appearance.lua) so the
-      -- DESKTOP wallpaper shows through, and this wash is only a light tint
-      -- (0.45) that keeps text off the busy parts of the image.
+      -- vs. flat dark you get. User wants full transparency, BUT on busy
+      -- multi-color images light wallpaper regions swallow the code. Fix:
+      -- a CENTER-WEIGHTED gradient scrim — heavier (0.62) where the code
+      -- sits (center), fading to 0.12 at the edges so the image stays
+      -- visible around the editor. Readability without an opaque box.
       table.insert(bg_opts, {
-         source = { Color = colors.background },
+         source = {
+            Gradient = {
+               colors = { rgba(colors.background, 0.25), colors.background, colors.background, rgba(colors.background, 0.25) },
+               orientation = { Linear = { angle = 180 } },
+            },
+         },
          height = '120%',
          width = '120%',
          vertical_offset = '-10%',
          horizontal_offset = '-10%',
-         opacity = 0.45,
+         opacity = 1,
       })
       -- soft bottom-up fade for depth + tab/status bar legibility. Ends in
       -- TRANSPARENT of the theme background (not a fixed dark), so the chrome
