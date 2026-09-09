@@ -91,7 +91,7 @@ The full architecture and the per-server reasoning is in [`lsp.md`](lsp.md).
 Every keymap is defined either in `lua/keymaps.lua` (custom bindings not
 belonging to a specific plugin) or inline in a plugin spec (bindings that
 should only be active when that plugin is loaded — `which-key`, snacks,
-overseer, telescope, etc.).
+overseer, etc.).
 
 See [`keymaps.md`](keymaps.md) for the full list grouped by purpose.
 

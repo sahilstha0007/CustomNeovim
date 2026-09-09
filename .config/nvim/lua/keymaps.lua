@@ -4,20 +4,21 @@ local opts = { noremap = true, silent = true }
 -- Clear highlights on search when pressing <Esc> in normal mode
 keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
--- Split windows
-keymap.set('n', 'sh', ':vsplit<Return>', opts)
-keymap.set('n', 'sv', ':split<Return>', opts)
+-- Split windows: <leader>| / <leader>- (LazyVim convention — the key
+-- MATCHES the split line you get). `s` is left free for flash.nvim's
+-- jump (see plugins/editor/flash.lua), and <C-w>v / <C-w>s still work.
+keymap.set('n', '<leader>|', ':vsplit<Return>', vim.tbl_extend('keep', opts, { desc = 'Split vertical (side-by-side)' }))
+keymap.set('n', '<leader>-', ':split<Return>', vim.tbl_extend('keep', opts, { desc = 'Split horizontal (stacked)' }))
 
--- Tabs
-keymap.set('n', 'te', ':tabedit', opts)
-keymap.set('n', '<tab>', ':tabnext<Return>', opts)
-keymap.set('n', '<s-tab>', ':tabprev<Return>', opts)
+-- Tabs: gt/gT are native next/prev; <Tab> is NOT remapped (remapping it
+-- kills <C-i> — terminals send Tab and Ctrl-i as the same byte, and <C-i>
+-- is jumplist-forward, the partner of <C-o>).
 keymap.set('n', '<leader><tab>d', ':tabclose<Return>', opts)
 
 -- LSP Rename
 vim.keymap.set('n', '<leader>cr', function()
   vim.lsp.buf.rename()
-end, { expr = true, desc = 'LSP Rename' })
+end, { desc = 'LSP Rename' })
 
 -- Buffer functions
 local function delete_other_buffers()
@@ -30,6 +31,23 @@ local function delete_other_buffers()
     end
   end
 end
+
+-- Quickfix / loclist navigation (unimpaired-style). After grug-far replace
+-- or grep-picker picks land in the quickfix, ]q/[q walks them without the
+-- picker open. Same for ]l/[l in the location list. Wrapping at the ends
+-- (stock :cnext errors E553 "No more items" at boundaries; wrap instead,
+-- LazyVim-style, so cycling never dead-ends).
+local function resilient_nav(next_cmd, wrap_cmd)
+  return function()
+    if not pcall(vim.cmd, next_cmd) then
+      vim.cmd(wrap_cmd)
+    end
+  end
+end
+keymap.set('n', ']q', resilient_nav('cnext', 'cfirst'), { desc = 'Quickfix Next' })
+keymap.set('n', '[q', resilient_nav('cprev', 'clast'), { desc = 'Quickfix Prev' })
+keymap.set('n', ']l', resilient_nav('lnext', 'lfirst'), { desc = 'Loclist Next' })
+keymap.set('n', '[l', resilient_nav('lprev', 'llast'), { desc = 'Loclist Prev' })
 
 -- Buffers
 keymap.set('n', '<S-h>', '<cmd>bprevious<cr>', { desc = 'Prev Buffer' })
@@ -46,7 +64,7 @@ keymap.set(
 keymap.set(
   'n',
   '<leader>bD',
-  '<cmd>:bd<cr>',
+  '<cmd>bd<CR>',
   { desc = 'Delete Buffer and Window' }
 )
 
@@ -77,13 +95,22 @@ local function is_skip_char(char)
   return false
 end
 
-vim.keymap.set('i', '<C-l>', function()
-  local col = vim.fn.col('.')
-  local line = vim.fn.getline('.')
-  local char_under_cursor = line:sub(col, col)
-  if is_skip_char(char_under_cursor) then
-    return '<Right>'
-  else
-    return '<C-l>'
-  end
-end, { expr = true, noremap = true, desc = 'Skip past closing bracket/quote/comma' })
+vim.keymap.set(
+  'i',
+  '<C-l>',
+  function()
+    local col = vim.fn.col '.'
+    local line = vim.fn.getline '.'
+    local char_under_cursor = line:sub(col, col)
+    if is_skip_char(char_under_cursor) then
+      return '<Right>'
+    else
+      return '<C-l>'
+    end
+  end,
+  {
+    expr = true,
+    noremap = true,
+    desc = 'Skip past closing bracket/quote/comma',
+  }
+)

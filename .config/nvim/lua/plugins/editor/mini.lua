@@ -27,9 +27,16 @@ return {
           find_left = 'gsF',
           highlight = 'gsh',
           replace = 'gsr',
-          update_n_lines = 'gsn',
         },
       }
+      -- mini.surround never maps `update_n_lines` itself (the config key is
+      -- silently ignored), so bind it explicitly.
+      vim.keymap.set(
+        'n',
+        'gsn',
+        '<cmd>lua MiniSurround.update_n_lines()<CR>',
+        { desc = 'Surround: Set N Lines' }
+      )
 
       require('mini.move').setup {
         mappings = {

@@ -98,6 +98,11 @@ return {
           gitsigns.toggle_current_line_blame,
           { desc = 'Blame Line' }
         )
+        -- Full commit blame popup (like fugitive :Git blame): shows author,
+        -- date, and full commit message for the current line.
+        map('n', '<leader>gB', function()
+          gitsigns.blame_line { full = true }
+        end, { desc = 'Blame Line Popup (full)' })
         map(
           'n',
           '<leader>gds',

@@ -41,6 +41,15 @@ return {
     { '<leader>ff',  function() Snacks.picker.files() end, desc = 'Files' },
     { '<leader><space>', function() Snacks.picker.files() end, desc = 'Find Files' },
     { '<leader>fg',  function() Snacks.picker.git_files() end, desc = 'Git-files' },
+    -- Terminal toggle (snacks.terminal): <C-/> mirrors VSCode's terminal
+    -- key. Terminals send C-/ as C-_, so map both spellings. Needs t-mode
+    -- too: snacks installs no in-terminal keymaps of its own, and lazy's
+    -- default key mode is n — without this the toggle can open a terminal
+    -- but <C-/> inside it goes to the shell instead of closing it.
+    { '<C-/>',       function() Snacks.terminal.toggle() end, mode = { 'n', 't' }, desc = 'Terminal (toggle)' },
+    { '<C-_>',       function() Snacks.terminal.toggle() end, mode = { 'n', 't' }, desc = 'Terminal (toggle)' },
+    { '<leader>ft',  function() Snacks.terminal.toggle() end, desc = 'Terminal (toggle, cwd)' },
+    { '<leader>fT',  function() Snacks.terminal.toggle(nil, { cwd = Snacks.git.get_root() }) end, desc = 'Terminal (toggle, git root)' },
     { '<leader>s"',  function() Snacks.picker.registers() end, desc = 'Registers' },
     { '<leader>sa',  function() Snacks.picker.autocmds() end, desc = 'Auto Commands' },
     { '<leader>sb',  function() Snacks.picker.lines() end, desc = 'Buffer' },

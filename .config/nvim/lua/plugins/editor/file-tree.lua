@@ -96,17 +96,19 @@ return {
 
         -- custom mappings
         vim.keymap.set('n', 'P', api.node.open.preview, ops 'Preview')
+        -- api names are "vertical"/"horizontal" = the split line, so
+        -- vertical = side-by-side windows, horizontal = stacked windows.
         vim.keymap.set(
           'n',
           's',
           api.node.open.vertical_no_picker,
-          ops 'Open Horizontal'
+          ops 'Open Side-by-side (vsplit)'
         )
         vim.keymap.set(
           'n',
           'S',
           api.node.open.horizontal_no_picker,
-          ops 'Open Vertical'
+          ops 'Open Stacked (split)'
         )
       end
 

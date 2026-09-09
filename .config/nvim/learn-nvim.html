@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Learn Neovim — complete coding reference for your setup</title>
-<meta name="description" content="A basic-to-intermediate complete reference for Neovim, built around Sahil's actual config: keymaps, leader, telescope, LSP, git, DAP, tests, plugins.">
+<meta name="description" content="A basic-to-intermediate complete reference for Neovim, built around Sahil's actual config: keymaps, leader, snacks.picker, LSP, git, DAP, tests, plugins.">
 <style>
 /* ------------------------------------------------------------------ *
  *  Learn Neovim — complete coding reference for Sahil's setup.
@@ -330,7 +330,7 @@ the <span class="k">keyboard</span> is the whole <span class="m">editor</span>.
 plugins     = <span class="s">lazy.nvim</span>       <span class="cm">-- lua/lazy-init.lua, one spec per file</span>
 colors      = <span class="s">matugen</span>          <span class="cm">-- Material You, from your wallpaper</span>
 completion  = <span class="s">blink.cmp</span>       <span class="cm">-- + friendly-snippets</span>
-finding     = <span class="s">telescope</span> + <span class="s">ripgrep</span>
+finding     = <span class="s">snacks.picker</span> + <span class="s">ripgrep</span>   <span class="cm">-- single picker system</span>
 LSP         = <span class="s">vim.lsp</span> (native) + <span class="s">mason</span> installs
 statusline  = <span class="s">lualine</span>          <span class="cm">-- this page's header is modeled on it</span>
 dashboard   = <span class="s">snacks</span>           <span class="cm">-- start screen + smooth UX (lesson 26)</span>
@@ -552,8 +552,8 @@ spec = {
   <div class="krow"><span class="k"><kbd>C-w</kbd><kbd>C-w</kbd> <kbd>C-w</kbd><kbd>h</kbd><kbd>j</kbd><kbd>k</kbd><kbd>l</kbd></span><span class="d">Native: cycle splits / jump to the split in a direction.</span></div>
   <div class="krow"><span class="k"><kbd>C-w</kbd><kbd>=</kbd> <kbd>C-w</kbd><kbd>_</kbd> <kbd>C-w</kbd><kbd>|</kbd></span><span class="d">Equal-size all splits / maximize this one vertically / horizontally.</span></div>
   <div class="krow"><span class="k"><kbd>C-w</kbd><kbd>q</kbd> <kbd>C-w</kbd><kbd>o</kbd></span><span class="d">Close the split / close all other splits.</span></div>
-  <div class="krow"><span class="k"><kbd>te</kbd> file</span><span class="d"><b>Your config:</b> open in a new tab (<code>:tabedit</code>).</span></div>
-  <div class="krow"><span class="k"><kbd>Tab</kbd> <kbd>S-Tab</kbd></span><span class="d"><b>Your config:</b> next / previous tab.</span></div>
+  <div class="krow"><span class="k"><kbd>gt</kbd> / <kbd>gT</kbd></span><span class="d">Native: next / previous tab. (<b>Tab is intentionally unmapped</b> — it would kill <kbd>Ctrl+i</kbd>, jumplist-forward; Tab and Ctrl+i are the same byte in terminals.)</span></div>
+  <div class="krow"><span class="k"><kbd>:tabedit</kbd> file</span><span class="d">Native: open file in a new tab.</span></div>
   <div class="krow"><span class="k"><kbd>Space</kbd><kbd>Tab</kbd><kbd>d</kbd></span><span class="d"><b>Your config:</b> close the current tab.</span></div>
 
   <div class="yset">
@@ -597,7 +597,7 @@ spec = {
 <section class="lesson" id="find" data-mode="normal">
   <div class="part">Part II · Your setup</div>
   <h2><span class="no">09</span>Find &amp; grep <span class="badge">normal</span></h2>
-  <p class="lede">Telescope is your setup's fuzzy finder — the "everything in 3 keystrokes" plugin. These leaders are worth muscle memory.</p>
+  <p class="lede">The snacks picker is your setup2019s fuzzy finder 2014 the "everything in 3 keystrokes" system. These leaders are worth muscle memory.</p>
 
   <div class="cards">
     <div class="card"><kbd>Space</kbd><kbd>ff</kbd><p>Find files by name (hidden files included).</p></div>
@@ -622,10 +622,9 @@ spec = {
   <div class="tip"><b>In any picker:</b> start typing to filter, <kbd>C-j</kbd>/<kbd>C-k</kbd> to move, <kbd>Enter</kbd> to open. <kbd>Space</kbd><kbd>ff</kbd> is your "open a file" reflex — replace the mouse in the sidebar.</div>
 
   <div class="yset">
-    <div class="yh"><span class="tag">your config</span> · <code>lua/plugins/editor/telescope.lua</code></div>
-<pre>file_ignore_patterns = { <span class="s">'node_modules'</span>, <span class="s">'.git/'</span> }   <span class="cm">-- pickers skip junk</span>
-find_files = { hidden = <span class="s">true</span>, follow = <span class="s">true</span> }        <span class="cm">-- dotfiles are findable</span>
-buffers    = { sort_mru = <span class="s">true</span> }                      <span class="cm">-- most recent first</span></pre>
+    <div class="yh"><span class="tag">your config</span> · <code>lua/plugins/editor/snacks.lua</code></div>
+<pre>picker = { enabled = <span class="s">true</span> }   <span class="cm">-- one line: snacks.picker IS the picker system</span>
+<span class="cm">-- ~25 &lt;leader&gt; bindings open it: ff files, sg grep, sh help, ...</span></pre>
   </div>
 </section>
 
@@ -637,7 +636,7 @@ buffers    = { sort_mru = <span class="s">true</span> }                      <sp
 
   <div class="krow"><span class="k"><kbd>Space</kbd><kbd>e</kbd></span><span class="d"><b>Your config:</b> toggle the explorer (nvim-tree).</span></div>
   <div class="krow"><span class="k"><kbd>Enter</kbd></span><span class="d">Open the file under the cursor (closes the tree — "quit on open").</span></div>
-  <div class="krow"><span class="k"><kbd>s</kbd> <kbd>S</kbd></span><span class="d"><b>Your config:</b> open in a vertical / horizontal split.</span></div>
+  <div class="krow"><span class="k"><kbd>s</kbd> <kbd>S</kbd></span><span class="d"><b>Your config:</b> open in a side-by-side (<code>:vsplit</code>) / stacked (<code>:split</code>) window.</span></div>
   <div class="krow"><span class="k"><kbd>P</kbd></span><span class="d"><b>Your config:</b> preview the file without leaving the tree.</span></div>
   <div class="krow"><span class="k"><kbd>a</kbd> <kbd>d</kbd> <kbd>r</kbd> <kbd>R</kbd></span><span class="d">Native: create file/dir, delete, rename, refresh.</span></div>
 
@@ -754,7 +753,7 @@ y  i  t        <span class="cm">yank inside tag        →  yit</span>
   <div class="krow"><span class="k"><kbd>m</kbd>a</span><span class="d">Set mark <code>a</code> at the cursor (lowercase = per-file).</span></div>
   <div class="krow"><span class="k"><kbd>`</kbd>a <kbd>'</kbd>a</span><span class="d">Jump to mark <code>a</code>: backtick = exact column, quote = line start.</span></div>
   <div class="krow"><span class="k"><kbd>mA</kbd> <kbd>`</kbd>A</span><span class="d">Uppercase marks are <b>global</b> — jump across files in the project.</span></div>
-  <div class="krow"><span class="k"><kbd>Space</kbd><kbd>sm</kbd></span><span class="d"><b>Your config:</b> pick a mark from Telescope.</span></div>
+  <div class="krow"><span class="k"><kbd>Space</kbd><kbd>sm</kbd></span><span class="d"><b>Your config:</b> pick a mark from the snacks picker.</span></div>
   <div class="krow"><span class="k"><kbd>``</kbd> <kbd>''</kbd></span><span class="d">Jump back to where you were before the last jump — instant "return to sender".</span></div>
   <div class="krow"><span class="k"><kbd>C-o</kbd> <kbd>C-i</kbd></span><span class="d">Jumplist: back / forward through your cursor history. <kbd>Space</kbd><kbd>sj</kbd> browses it visually.</span></div>
   <div class="krow"><span class="k"><kbd>g;</kbd> <kbd>g,</kbd></span><span class="d">Changelist: jump to the last place you <i>edited</i> (not just moved).</span></div>
@@ -802,7 +801,7 @@ y  i  t        <span class="cm">yank inside tag        →  yit</span>
     <tr><td><kbd>Space</kbd><kbd>ca</kbd></td><td><b>Your config:</b> code actions (quick fixes, refactors).</td></tr>
     <tr><td><kbd>Space</kbd><kbd>th</kbd></td><td><b>Your config:</b> toggle inlay hints (type annotations inline).</td></tr>
     <tr><td><kbd>]d</kbd> <kbd>[d</kbd></td><td>Jump to next / previous diagnostic.</td></tr>
-    <tr><td><kbd>Space</kbd><kbd>sd</kbd> <kbd>sD</kbd></td><td>List this file's / the project's diagnostics in Telescope.</td></tr>
+    <tr><td><kbd>Space</kbd><kbd>sd</kbd> <kbd>sD</kbd></td><td>List this file2019s / the project2019s diagnostics in the snacks picker.</td></tr>
     <tr><td><kbd>Space</kbd><kbd>cd</kbd> <kbd>cD</kbd></td><td>Diagnostics in Trouble (navigable list on the left).</td></tr>
     <tr><td><kbd>Space</kbd><kbd>cs</kbd></td><td>Document symbols in Trouble.</td></tr>
   </table>
@@ -857,7 +856,7 @@ sources = { default = { <span class="s">'lsp'</span>, <span class="s">'path'</sp
   <div class="krow"><span class="k">biome / prettier</span><span class="d">JS/TS/JSON/CSS — Biome is preferred if <code>biome.json</code> exists, Prettier otherwise.</span></div>
   <div class="krow"><span class="k">ruff</span><span class="d">Python lint + type-check + format in one (replaces pyright entirely).</span></div>
   <div class="krow"><span class="k">phpstan</span><span class="d">PHP static analysis, runs via nvim-lint on save.</span></div>
-  <div class="krow"><span class="k"><kbd>Space</kbd><kbd>sd</kbd></span><span class="d">See lint errors in Telescope; the gutter icons are diagnostics.</span></div>
+  <div class="krow"><span class="k"><kbd>Space</kbd><kbd>sd</kbd></span><span class="d">See lint errors in the snacks picker; the gutter icons are diagnostics.</span></div>
 
   <div class="yset">
     <div class="yh"><span class="tag">your config</span> · <code>lua/plugins/formatting/conform.lua</code> + <code>linting/core.lua</code></div>
@@ -935,7 +934,7 @@ sources = { default = { <span class="s">'lsp'</span>, <span class="s">'path'</sp
   <div class="krow"><span class="k"><kbd>Space</kbd><kbd>gds</kbd></span><span class="d"><b>Your config:</b> toggle showing deleted lines.</span></div>
   <div class="krow"><span class="k"><kbd>Space</kbd><kbd>gg</kbd></span><span class="d"><b>Your config:</b> open lazygit — stage, commit, push, stash, browse history.</span></div>
   <div class="krow"><span class="k"><kbd>Space</kbd><kbd>gD</kbd> <kbd>gH</kbd> <kbd>gq</kbd></span><span class="d"><b>Your config:</b> diffview — open a branch/commit diff, browse file history, close it. Side-by-side for when lazygit feels shallow.</span></div>
-  <div class="krow"><span class="k"><kbd>Space</kbd><kbd>fg</kbd></span><span class="d"><b>Your config:</b> open a git-tracked file (Telescope).</span></div>
+  <div class="krow"><span class="k"><kbd>Space</kbd><kbd>fg</kbd></span><span class="d"><b>Your config:</b> open a git-tracked file (snacks picker).</span></div>
 
   <div class="yset">
     <div class="yh"><span class="tag">your config</span> · <code>lua/plugins/editor/gitsigns.lua</code> + <code>lazygit.lua</code></div>
@@ -973,16 +972,15 @@ keys = { { <span class="s">'&lt;leader&gt;gg'</span>, <span class="s">'&lt;cmd&g
 
   <h3>tmux integration</h3>
   <div class="krow"><span class="k"><kbd>C-h</kbd> <kbd>C-j</kbd> <kbd>C-k</kbd> <kbd>C-l</kbd></span><span class="d"><b>Your config:</b> move focus between nvim and tmux panes as if they were one editor.</span></div>
-  <div class="krow"><span class="k"><kbd>C-\</kbd></span><span class="d"><b>Your config:</b> jump to the previous pane.</span></div>
   <div class="krow"><span class="k">prefix <kbd>C</kbd> + arrows</span><span class="d">tmux.nvim resize bindings.</span></div>
 
   <div class="tip"><b>The payoff:</b> <kbd>Space</kbd><kbd>a</kbd> for the AI, <kbd>C-l</kbd> back into nvim, tests in another pane — all with the same fingers. That's the whole point of this setup.</div>
 
   <div class="yset">
     <div class="yh"><span class="tag">your config</span> · <code>lua/plugins/editor/tmux.lua</code></div>
-<pre>{ <span class="s">'&lt;c-h&gt;'</span>, <span class="s">'&lt;cmd&gt;&lt;C-U&gt;TmuxNavigateLeft&lt;cr&gt;'</span> }
-{ <span class="s">'&lt;c-l&gt;'</span>, <span class="s">'&lt;cmd&gt;&lt;C-U&gt;TmuxNavigateRight&lt;cr&gt;'</span> }
-<span class="cm">-- + aserowy/tmux.nvim for resize (default keybindings enabled)</span></pre>
+<pre>{ <span class="s">'&lt;c-h&gt;'</span>, <span class="s">'&lt;cmd&gt;lua require"tmux".move_left()&lt;cr&gt;'</span> }
+{ <span class="s">'&lt;c-l&gt;'</span>, <span class="s">'&lt;cmd&gt;lua require"tmux".move_right()&lt;cr&gt;'</span> }
+<span class="cm">-- aserowy/tmux.nvim, resize default keybindings enabled</span></pre>
   </div>
 </section>
 
@@ -1029,7 +1027,7 @@ keys = { { <span class="s">'&lt;leader&gt;gg'</span>, <span class="s">'&lt;cmd&g
   <div class="krow"><span class="k"><kbd>:checkhealth</kbd></span><span class="d">Everything in one report — plugins, LSP, tmux. Run this first when things break.</span></div>
   <div class="krow"><span class="k"><kbd>:help</kbd></span><span class="d">The manual. <code>:help user-manual</code> is a full course; <code>:help key-notation</code> decodes <kbd>&lt;leader&gt;</kbd> etc.</span></div>
   <div class="krow"><span class="k"><kbd>:help</kbd><kbd> motion</kbd></span><span class="d">Try any topic: <code>:help text-objects</code>, <code>:help windows</code>, <code>:help registers</code>.</span></div>
-  <div class="krow"><span class="k"><kbd>Space</kbd><kbd>sh</kbd></span><span class="d"><b>Your config:</b> fuzzy-search help topics in Telescope.</span></div>
+  <div class="krow"><span class="k"><kbd>Space</kbd><kbd>sh</kbd></span><span class="d"><b>Your config:</b> fuzzy-search help topics in the snacks picker.</span></div>
   <div class="krow"><span class="k">vimtutor</span><span class="d">Interactive 30-minute built-in tutorial — run <code>vimtutor</code> in your terminal.</span></div>
   <div class="krow"><span class="k">docs/</span><span class="d">Your repo's <code>docs/</code> folder: keymaps.md, plugins.md, lsp.md, architecture.md, cheatsheet.md.</span></div>
 </section>
@@ -1150,6 +1148,7 @@ keys = { { <span class="s">'&lt;leader&gt;gg'</span>, <span class="s">'&lt;cmd&g
     <tr><td><kbd>l</kbd></td><td>Lazy actions picker (sync, update, clean, …)</td></tr>
     <tr><td><kbd>fr</kbd></td><td>File ring (recent files, harpoon-style)</td></tr>
     <tr><td><kbd>bp</kbd></td><td>Pick buffer from the tab strip</td></tr>
+    <tr><td><kbd>a</kbd></td><td>Pick AI agent (Claude Code / opencode) — right tmux pane inside tmux</td></tr>
     <tr><td><kbd>ut</kbd></td><td>Toggle treesitter-context</td></tr>
     <tr><td><kbd>th</kbd></td><td>Toggle inlay hints</td></tr>
     <tr><td><kbd>Space</kbd><kbd>Tab</kbd><kbd>d</kbd></td><td>Close tab</td></tr>
@@ -1159,7 +1158,7 @@ keys = { { <span class="s">'&lt;leader&gt;gg'</span>, <span class="s">'&lt;cmd&g
   <table class="ref">
     <tr><th>Keys</th><th>What it does</th></tr>
     <tr><td><kbd>sh</kbd> <kbd>sv</kbd></td><td>Vertical / horizontal split</td></tr>
-    <tr><td><kbd>te</kbd> · <kbd>Tab</kbd>/<kbd>S-Tab</kbd></td><td>New tab · next/prev tab</td></tr>
+    <tr><td><kbd>gt</kbd>/<kbd>gT</kbd> · <kbd>:tabedit</kbd></td><td>Next/prev tab · new tab (native)</td></tr>
     <tr><td><kbd>]b</kbd> <kbd>[b</kbd> · <kbd>S-h</kbd> <kbd>S-l</kbd></td><td>Next / previous buffer</td></tr>
     <tr><td><kbd>C-l</kbd> (insert)</td><td>Skip past closing bracket / quote / comma</td></tr>
     <tr><td><kbd>H</kbd> <kbd>L</kbd> <kbd>J</kbd> <kbd>K</kbd> (visual)</td><td>Move selection (mini.move)</td></tr>

@@ -38,6 +38,7 @@ require('lazy').setup({
     { import = 'plugins.editor.pickers' },
     { import = 'plugins.editor.tmux' },
     { import = 'plugins.editor.ufo' },
+    { import = 'plugins.editor.agent-picker' },
     { import = 'plugins.editor.which-key' },
     { import = 'plugins.editor.yanky' },
     { import = 'plugins.formatting.conform' },

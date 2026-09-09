@@ -295,7 +295,7 @@ local function catppuccin_opts()
     transparent_background = true, -- let kitty/wezterm opacity show through
     color_overrides = { [flavour] = build_overrides() },
     integrations = {
-      neo_tree           = true,
+      nvimtree           = true,
       treesitter         = true,
       blink_cmp          = true,
       gitsigns           = true,
@@ -321,20 +321,13 @@ local function catppuccin_opts()
         local darken = is_light_bg() and function(hex) return mix(hex, c.base, 0.45) end
           or function(hex) return mix(hex, '#000000', 0.45) end
         return {
-          -- Explorer blends with terminal
-          NeoTreeNormal        = { bg = 'NONE', fg = c.text },
-          NeoTreeNormalNC      = { bg = 'NONE' },
-          NeoTreeEndOfBuffer   = { bg = 'NONE' },
-          NeoTreeWinSeparator  = { fg = c.surface1, bg = 'NONE' },
-          NeoTreeRootName      = { fg = c.blue, bold = true },
-          NeoTreeDirectoryName = { fg = c.blue },
-          NeoTreeDirectoryIcon = { fg = c.blue },
-          NeoTreeFileName      = { fg = c.text },
-          NeoTreeFileIcon      = { fg = c.subtext0 },
-          NeoTreeGitAdded      = { fg = c.green },
-          NeoTreeGitModified   = { fg = c.yellow },
-          NeoTreeGitUntracked  = { fg = c.mauve },
-          NeoTreeIndentMarker  = { fg = c.overlay0 },
+          -- Explorer blends with terminal. nvim-tree.lua is the active tree
+          -- (neo-tree is disabled in editor/disable-neotree.lua), so these are
+          -- NvimTree* groups; catppuccin's nvimtree integration themes the rest.
+          NvimTreeNormal       = { bg = 'NONE', fg = c.text },
+          NvimTreeNormalNC     = { bg = 'NONE' },
+          NvimTreeEndOfBuffer  = { bg = 'NONE' },
+          NvimTreeWinSeparator = { fg = c.surface1, bg = 'NONE' },
 
           -- Completion popup: frosted, never fully transparent — a completion
           -- list overlays the code you're typing, so bg NONE (inheriting the
@@ -389,6 +382,11 @@ local function catppuccin_opts()
           Visual      = { bg = c.surface1 },
           MatchParen  = { bg = c.surface1, fg = c.blue, bold = true },
           WinSeparator = { fg = c.surface1 },
+
+          -- Active line: faint surface tint, and the line number lifts to
+          -- blue+bold so the cursor row is instantly findable.
+          CursorLine   = { bg = mix(c.base, c.surface0, 0.5) },
+          CursorLineNr = { fg = c.blue, bold = true },
 
           -- Floating windows (hover, diagnostics popup, dressing, which-key):
           -- fully transparent body — the wallpaper shows through, with the

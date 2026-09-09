@@ -32,9 +32,6 @@ vim.opt.breakindent = true
 -- Save undo history
 vim.opt.undofile = true
 
--- Allow switching away from modified buffers (no E37 when cycling with ]b / <S-h>)
-vim.opt.hidden = true
-
 -- Reload files changed on disk (checked again on focus regain)
 vim.opt.autoread = true
 
@@ -67,9 +64,10 @@ vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = 'split'
 
--- No cursorline: the current line stays clean, nothing gets a dark
--- background (relative numbers still show you where you are).
-vim.opt.cursorline = false
+-- Cursorline: the active line gets a faint surface tint (defined in
+-- terminal-colors' highlight_overrides so it follows theme switches and
+-- never paints an opaque bar over the transparent background).
+vim.opt.cursorline = true
 
 -- Smooth scroll (wheel/paging): glides instead of jumping line-by-line
 vim.opt.smoothscroll = true
