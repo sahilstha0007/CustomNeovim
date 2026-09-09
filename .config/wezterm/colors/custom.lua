@@ -105,15 +105,15 @@ local function apply_wallpaper(base, mat, light)
       c[k] = v
    end
    c.text      = guard(mat.foreground, base.text, light)
-   -- Brighten text toward near-white (same hue family): the darker backing
-   -- behind code demands a brighter fg for comfortable reading. FULL
-   -- TRANSPARENCY pass: blend 80% toward white on dark themes (the extra
-   -- transparency costs contrast — this buys it back); light themes keep
-   -- their guard-checked token untouched.
+   -- Brighten text toward near-white (same hue family) so it reads over the
+   -- fully transparent window — but code ACCENTS carry their own darker
+   -- lightness (nvim derive_accents caps at l68), and the plain-text fg
+   -- sits at 55% toward white: bright enough to read (≈13:1), not glaring
+   -- white. Light themes keep their guard-checked token untouched.
    if not light and c.text then
       local function ch(i)
          local v = tonumber(c.text:sub(i, i + 1), 16) or 0
-         return string.format('%02x', math.floor(v + (255 - v) * 0.8 + 0.5))
+         return string.format('%02x', math.floor(v + (255 - v) * 0.55 + 0.5))
       end
       c.text = '#' .. ch(2) .. ch(4) .. ch(6)
    end

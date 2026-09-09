@@ -313,15 +313,16 @@ local function derive_accents(chosen, primary_hex, D)
     rosewater = 20,
   }
   -- reference color for s/l: the wallpaper primary if we have it, else the
-  -- slot's own default (keeps light/dark themes both sane). Saturation is
-  -- CAPPED at 70 (HSLUV): the primary can carry s≈100, and rotating that
-  -- around the wheel lands most hues outside the sRGB gamut — the clip
-  -- turns them into flat neon. 70 keeps colors vivid but on-gamut.
+  -- slot's own default (keeps light/dark themes both sane). "Darker" per
+  -- user = richer/more saturated: lightness capped at 68 (deep, not pastel)
+  -- while saturation is pushed to 95 — near-max chroma — so every token is
+  -- a bold, color-boosted, highly visible version of its hue. (s≈100 with
+  -- l68 clips at some hues; 95 stays on-gamut.)
   local ref = primary_hex or D.blue
   local base_hue = hsluv_hue(ref)
-  local _, s = unpack(hsluv.hex_to_hsluv(ref))
-  s = math.min(s or 70, 70)
-  local l = select(3, unpack(hsluv.hex_to_hsluv(ref)))
+  local _, s, l = unpack(hsluv.hex_to_hsluv(ref))
+  s = math.min(s or 95, 95)
+  l = math.min(l or 80, 68)
   for slot, offset in pairs(OFFSETS) do
     if not chosen[slot] and ref then
       chosen[slot] = hsluv.hsluv_to_hex { (base_hue + offset) % 360, s, l }
@@ -337,6 +338,18 @@ local function build_overrides()
   -- palette couldn't provide (monochromatic wallpaper case), hue-spaced
   -- around the primary so no two code roles share a color
   derive_accents(A, A.blue, D)
+  -- Normalize EVERY accent (adopted + derived) to the same richness target:
+  -- s95 / l68 HSLUV. Adopted ones keep their natural hue but lose any
+  -- pastel wash (l80+) or gray muting (low s) — all 10 roles render equally
+  -- bold. Dark themes only; light themes keep guard-checked tokens as-is.
+  if not is_light_bg() then
+    for slot, hex in pairs(A) do
+      local h = hsluv_hue(hex)
+      if h >= 0 then
+        A[slot] = hsluv.hsluv_to_hex { h, 95, 68 }
+      end
+    end
+  end
   local base = pal.bg or D.base
   local text = pal.fg or D.text
   -- Surfaces are derived from bg/fg blends, never from ANSI slots: ml4w puts a
