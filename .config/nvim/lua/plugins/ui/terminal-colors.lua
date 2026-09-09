@@ -249,9 +249,94 @@ local LATTE_DEFAULTS = {
   flamingo = '#dd7878', rosewater = '#dc8a78',
 }
 
+-- HSLUV-space helpers via catppuccin's bundled lib: perceptually uniform
+-- hue rotation (unlike naive RGB hue math) so derived accents keep the same
+-- perceived lightness/saturation as the ones the wallpaper provided.
+local hsluv = require 'catppuccin.lib.hsluv'
+
+-- Hue (HSLUV space) of a hex color.
+local function hsluv_hue(hex)
+  local h, s, l = unpack(hsluv.hex_to_hsluv(hex))
+  return h
+end
+
+-- Rebuild a hex color keeping HSLUV saturation+lightness, changing hue.
+local function hsluv_rehue(hex, new_hue)
+  local _, s, l = unpack(hsluv.hex_to_hsluv(hex))
+  return hsluv.hsluv_to_hex { new_hue, s, l }
+end
+
+-- Perceptual hue distance (degrees, circular).
+local function hsluv_dist(a, b)
+  local d = math.abs(a - b) % 360
+  return math.min(d, 360 - d)
+end
+
+-- Derive a full, FUNCTIONALLY DISTINCT accent set for code syntax.
+--
+-- Why: a monochromatic wallpaper (this one is all warm red/orange) collapses
+-- most terminal accent slots onto 1-2 hues, so pick_accents() adopts only 2-3
+-- of them and every other syntax slot silently falls back to catppuccin
+-- defaults — a half-mixed palette where functions/strings/types barely
+-- differ from the wallpaper-primary chrome.
+--
+-- Strategy: whatever pick_accents() failed to adopt gets SYNTHESIZED at a
+-- guaranteed hue, spaced evenly around the wheel (golden-angle offsets from
+-- the primary hue), while keeping the wallpaper's own saturation/lightness
+-- (HSLUV) so everything reads as one family. Result: every functional group
+-- of code — comments, strings, numbers, keywords, operators, types,
+-- functions, members, params — has its own distinguishable hue, always.
+-- @param chosen table from pick_accents (slot -> hex, partial)
+-- @param primary_hex the wallpaper-primary hex (blue slot, always adopted)
+-- @param D defaults table (provides s/l reference when primary is missing)
+local function derive_accents(chosen, primary_hex, D)
+  -- hue offsets (degrees, HSLUV space) per slot, measured from the primary/
+  -- blue hue. Even ~36° spacing puts every functional role on its own hue:
+  -- functions(blue=primary) / types(yellow) / strings(green) / operators(sky)
+  -- / escapes(pink) / params(maroon) / keywords(mauve) / members(lavender) /
+  -- builtins(red) / numbers(peach). At the wallpaper's saturation+lightness
+  -- a 36° HSLUV step is a clearly visible color change (deltaE >> JND).
+  local OFFSETS = {
+    blue = 0,
+    yellow = 40,
+    green = 76,
+    sky = 112,
+    pink = 148,
+    maroon = 184,
+    mauve = 220,
+    lavender = 256,
+    red = 292,
+    peach = 328,
+    teal = 94,
+    sapphire = 130,
+    flamingo = 58,
+    rosewater = 20,
+  }
+  -- reference color for s/l: the wallpaper primary if we have it, else the
+  -- slot's own default (keeps light/dark themes both sane). Saturation is
+  -- CAPPED at 70 (HSLUV): the primary can carry s≈100, and rotating that
+  -- around the wheel lands most hues outside the sRGB gamut — the clip
+  -- turns them into flat neon. 70 keeps colors vivid but on-gamut.
+  local ref = primary_hex or D.blue
+  local base_hue = hsluv_hue(ref)
+  local _, s = unpack(hsluv.hex_to_hsluv(ref))
+  s = math.min(s or 70, 70)
+  local l = select(3, unpack(hsluv.hex_to_hsluv(ref)))
+  for slot, offset in pairs(OFFSETS) do
+    if not chosen[slot] and ref then
+      chosen[slot] = hsluv.hsluv_to_hex { (base_hue + offset) % 360, s, l }
+    end
+  end
+  return chosen
+end
+
 local function build_overrides()
   local D = is_light_bg() and LATTE_DEFAULTS or MOCHA_DEFAULTS
   local A = pick_accents()
+  -- guarantee FULL functional variation: synthesize any accent the terminal
+  -- palette couldn't provide (monochromatic wallpaper case), hue-spaced
+  -- around the primary so no two code roles share a color
+  derive_accents(A, A.blue, D)
   local base = pal.bg or D.base
   local text = pal.fg or D.text
   -- Surfaces are derived from bg/fg blends, never from ANSI slots: ml4w puts a
