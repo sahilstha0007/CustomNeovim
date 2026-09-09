@@ -125,16 +125,10 @@ local keys = {
    -- tab: hide tab-bar
    { key = '9',          mods = mod.SUPER,     action = act.EmitEvent('tabs.toggle-tab-bar'), },
 
-   -- tab: Alt+1..8 jumps straight to that tab (tmux-style). Pairs with
-   -- tmux's own Alt+1..9 window jump: same muscle memory at both layers.
-   { key = '1', mods = mod.SUPER, action = act.ActivateTab(0) },
-   { key = '2', mods = mod.SUPER, action = act.ActivateTab(1) },
-   { key = '3', mods = mod.SUPER, action = act.ActivateTab(2) },
-   { key = '4', mods = mod.SUPER, action = act.ActivateTab(3) },
-   { key = '5', mods = mod.SUPER, action = act.ActivateTab(4) },
-   { key = '6', mods = mod.SUPER, action = act.ActivateTab(5) },
-   { key = '7', mods = mod.SUPER, action = act.ActivateTab(6) },
-   { key = '8', mods = mod.SUPER, action = act.ActivateTab(7) },
+   -- NOTE: no Alt+1..8 tab jumps here on purpose — wezterm would eat the
+   -- key before tmux ever sees it, killing tmux's Alt+1..9 window jump
+   -- (tmux owns windows/panes; wezterm tabs are the outer chrome, see
+   -- the "Double chrome" gotcha in the Obsidian notes).
 
    -- window --
    -- window: spawn windows
