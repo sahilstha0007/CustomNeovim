@@ -547,8 +547,11 @@ spec = {
   <h2><span class="no">07</span>Windows &amp; tabs <span class="badge">normal</span></h2>
   <p class="lede">Your config has its own split vocabulary. Learn it and you'll stop opening a second terminal for everything.</p>
 
-  <div class="krow"><span class="k"><kbd>sh</kbd></span><span class="d"><b>Your config:</b> vertical split — editor side by side (<code>:vsplit</code>).</span></div>
-  <div class="krow"><span class="k"><kbd>sv</kbd></span><span class="d"><b>Your config:</b> horizontal split — one above the other (<code>:split</code>).</span></div>
+  <div class="krow"><span class="k"><kbd>Space</kbd><kbd>|</kbd></span><span class="d"><b>Your config:</b> vertical split — editor side by side (<code>:vsplit</code>). The key matches the split line (LazyVim convention; <kbd>sh</kbd> legacy alias).</span></div>
+  <div class="krow"><span class="k"><kbd>Space</kbd><kbd>-</kbd></span><span class="d"><b>Your config:</b> horizontal split — one above the other (<code>:split</code>). tmux mirrors this: <kbd>C-a</kbd><kbd>|</kbd> / <kbd>C-a</kbd><kbd>-</kbd>.</span></div>
+  <div class="krow"><span class="k"><kbd>Space</kbd><kbd>wd</kbd></span><span class="d"><b>Your config:</b> delete (close) the current window.</span></div>
+  <div class="krow"><span class="k"><kbd>Space</kbd><kbd>wm</kbd></span><span class="d"><b>Your config:</b> maximize (zoom) the current window — same engine as <kbd>Space</kbd><kbd>Z</kbd>.</span></div>
+  <div class="krow"><span class="k"><kbd>C-↑/↓/←/→</kbd></span><span class="d"><b>Your config:</b> resize window ±2 (LazyVim convention).</span></div>
   <div class="krow"><span class="k"><kbd>C-w</kbd><kbd>C-w</kbd> <kbd>C-w</kbd><kbd>h</kbd><kbd>j</kbd><kbd>k</kbd><kbd>l</kbd></span><span class="d">Native: cycle splits / jump to the split in a direction.</span></div>
   <div class="krow"><span class="k"><kbd>C-w</kbd><kbd>=</kbd> <kbd>C-w</kbd><kbd>_</kbd> <kbd>C-w</kbd><kbd>|</kbd></span><span class="d">Equal-size all splits / maximize this one vertically / horizontally.</span></div>
   <div class="krow"><span class="k"><kbd>C-w</kbd><kbd>q</kbd> <kbd>C-w</kbd><kbd>o</kbd></span><span class="d">Close the split / close all other splits.</span></div>
@@ -558,11 +561,10 @@ spec = {
 
   <div class="yset">
     <div class="yh"><span class="tag">your config</span> · <code>lua/keymaps.lua</code></div>
-<pre><span class="k">vim.keymap.set</span>(<span class="s">'n'</span>, <span class="s">'sh'</span>, <span class="s">':vsplit&lt;Return&gt;'</span>)   <span class="cm">-- sh = side-by-side split</span>
-<span class="k">vim.keymap.set</span>(<span class="s">'n'</span>, <span class="s">'sv'</span>, <span class="s">':split&lt;Return&gt;'</span>)     <span class="cm">-- sv = stacked split</span>
-<span class="k">vim.keymap.set</span>(<span class="s">'n'</span>, <span class="s">'te'</span>, <span class="s">':tabedit'</span>)
-<span class="k">vim.keymap.set</span>(<span class="s">'n'</span>, <span class="s">'&lt;tab&gt;'</span>, <span class="s">':tabnext&lt;Return&gt;'</span>)
-<span class="k">vim.keymap.set</span>(<span class="s">'n'</span>, <span class="s">'&lt;s-tab&gt;'</span>, <span class="s">':tabprev&lt;Return&gt;'</span>)</pre>
+<pre><span class="k">vim.keymap.set</span>(<span class="s">'n'</span>, <span class="s">'&lt;leader&gt;|'</span>, <span class="s">':vsplit&lt;Return&gt;'</span>) <span class="cm">-- Space+| side-by-side (LazyVim)</span>
+<span class="k">vim.keymap.set</span>(<span class="s">'n'</span>, <span class="s">'&lt;leader&gt;-'</span>, <span class="s">':split&lt;Return&gt;'</span>)   <span class="cm">-- Space+- stacked (LazyVim)</span>
+<span class="k">vim.keymap.set</span>(<span class="s">'n'</span>, <span class="s">'&lt;leader&gt;wd'</span>, <span class="s">'&lt;C-w&gt;c'</span>)          <span class="cm">-- Space+wd delete window</span>
+<span class="k">vim.keymap.set</span>(<span class="s">'n'</span>, <span class="s">'&lt;C-Up&gt;'</span>, <span class="s">'&lt;cmd&gt;resize +2&lt;CR&gt;'</span>)     <span class="cm">-- C-arrows resize ±2</span></pre>
   </div>
 
   <div class="tip"><b>tmux tip:</b> in a terminal inside tmux, <kbd>C-h/j/k/l</kbd> hops between nvim and tmux panes seamlessly (your tmux plugin).</div>
@@ -1060,7 +1062,7 @@ keys = { { <span class="s">'&lt;leader&gt;gg'</span>, <span class="s">'&lt;cmd&g
   <div class="krow"><span class="k"><kbd>Space</kbd><kbd>fj</kbd></span><span class="d"><b>Your config:</b> type 1–2 letters, jump to any word visible on screen (flash).</span></div>
   <div class="krow"><span class="k"><kbd>Space</kbd><kbd>ft</kbd> <kbd>R</kbd></span><span class="d"><b>Your config:</b> jump to a treesitter node / treesitter search (visual/operator).</span></div>
   <div class="krow"><span class="k"><kbd>Space</kbd><kbd>bp</kbd></span><span class="d"><b>Your config:</b> pick a buffer from the tab strip at the top (bufferline).</span></div>
-  <div class="tip"><b>Why not plain <kbd>s</kbd>?</b> Flash's stock key is <kbd>s</kbd> — but <kbd>sh</kbd>/<kbd>sv</kbd> already own it for splits, so flash lives under <kbd>Space</kbd><kbd>f</kbd>.</div>
+  <div class="tip"><b>Flash on plain <kbd>s</kbd>:</b> splits moved to <kbd>Space</kbd><kbd>|</kbd> / <kbd>Space</kbd><kbd>-</kbd> (LazyVim convention, 2026-09-09), which freed plain <kbd>s</kbd> — so flash now jumps from <kbd>s</kbd> directly. Extra lives under <kbd>Space</kbd><kbd>f</kbd>.</div>
 
   <h3>Background polish (snacks)</h3>
   <ul>

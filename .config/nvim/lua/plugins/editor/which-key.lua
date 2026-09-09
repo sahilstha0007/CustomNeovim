@@ -133,6 +133,11 @@ return {
           icon = { icon = '󰈉', color = 'grey' },
         },
         {
+          '<leader>w',
+          group = 'Window',
+          icon = { icon = '󰓩', color = 'blue' },
+        },
+        {
           'gz',
           group = 'Surround',
           mode = { 'n', 'v' },

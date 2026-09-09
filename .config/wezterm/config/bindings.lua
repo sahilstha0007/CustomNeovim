@@ -289,11 +289,10 @@ local keys = {
    { key = 'Enter', mods = mod.SUPER,     action = act.TogglePaneZoomState },
    { key = 'w',     mods = mod.SUPER,     action = act.CloseCurrentPane({ confirm = false }) },
 
-   -- panes: navigation
-   { key = 'k',     mods = mod.SUPER_REV, action = act.ActivatePaneDirection('Up') },
-   { key = 'j',     mods = mod.SUPER_REV, action = act.ActivatePaneDirection('Down') },
-   { key = 'h',     mods = mod.SUPER_REV, action = act.ActivatePaneDirection('Left') },
-   { key = 'l',     mods = mod.SUPER_REV, action = act.ActivatePaneDirection('Right') },
+   -- NOTE: no Ctrl+Alt+hjkl pane navigation here on purpose — wezterm
+   -- would eat the key before tmux ever sees it, killing tmux.nvim's
+   -- C-M-hjkl pane-swap binding (tmux owns windows/panes; wezterm is
+   -- outer chrome only — see the "Double chrome" gotcha in Obsidian).
    {
       key = 'p',
       mods = mod.SUPER_REV,
@@ -301,10 +300,9 @@ local keys = {
    },
 
    -- panes: scroll pane
-   { key = 'u',        mods = mod.SUPER, action = act.ScrollByLine(-5) },
-   { key = 'd',        mods = mod.SUPER, action = act.ScrollByLine(5) },
-   { key = 'PageUp',   mods = 'NONE',    action = act.ScrollByPage(-0.75) },
-   { key = 'PageDown', mods = 'NONE',    action = act.ScrollByPage(0.75) },
+   -- NOTE: no bare PageUp/PageDown binds — wezterm would eat them before
+   -- tmux sees them, killing tmux's `bind -n PageUp copy-mode -u` scrollback
+   -- entry. The default (pass through to the app) is what we want.
 
    -- key-tables --
    -- resizes fonts
