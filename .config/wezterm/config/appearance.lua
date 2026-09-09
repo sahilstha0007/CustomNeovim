@@ -73,12 +73,6 @@ return {
    },
    adjust_window_size_when_changing_font_size = false,
    window_close_confirmation = 'NeverPrompt',
-   -- FULL TRANSPARENCY (user preference): the window itself renders at 85%
-   -- opacity so the DESKTOP wallpaper (Hyprland) shows through everywhere —
-   -- editor, panes, chrome. The in-app background layers (backdrops.lua)
-   -- carry only a light tint; this option is what punches the real hole in
-   -- the window. Raise toward 1.0 if text ever feels washed out.
-   window_background_opacity = 0.85,
    -- dim inactive panes so the focused pane pops (sharper focus than the
    -- 0.8 glassy pass, but not as muddy as the original 0.72)
    inactive_pane_hsb = {

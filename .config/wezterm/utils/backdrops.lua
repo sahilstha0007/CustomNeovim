@@ -218,26 +218,20 @@ function BackDrops:_gen_opts()
          -- display copy when cached (fast decode); original while warming
          source = { File = display_path(self.images[self.current_idx]) },
          horizontal_align = 'Center',
-         hsb = { brightness = 0.72, saturation = 0.92 },
+         hsb = { brightness = 0.82, saturation = 1.0 },
       })
       -- flat frost wash — the single knob that decides how much "glass"
-      -- vs. flat dark you get. User wants full transparency, BUT on busy
-      -- multi-color images light wallpaper regions swallow the code. Fix:
-      -- a CENTER-WEIGHTED gradient scrim — heavier (0.62) where the code
-      -- sits (center), fading to 0.12 at the edges so the image stays
-      -- visible around the editor. Readability without an opaque box.
+      -- vs. flat dark you get. 0.8 buries the wallpaper (everything reads
+      -- near-opaque); 0.5 is all-glass but soft for code; 0.72 let too much
+      -- wallpaper bleed through behind characters — text looked dim.
+      -- 0.82: strong dark backing for code, wallpaper still glows through.
       table.insert(bg_opts, {
-         source = {
-            Gradient = {
-               colors = { rgba(colors.background, 0.25), colors.background, colors.background, rgba(colors.background, 0.25) },
-               orientation = { Linear = { angle = 180 } },
-            },
-         },
+         source = { Color = colors.background },
          height = '120%',
          width = '120%',
          vertical_offset = '-10%',
          horizontal_offset = '-10%',
-         opacity = 1,
+         opacity = 0.82,
       })
       -- soft bottom-up fade for depth + tab/status bar legibility. Ends in
       -- TRANSPARENT of the theme background (not a fixed dark), so the chrome
