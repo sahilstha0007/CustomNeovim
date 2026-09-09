@@ -313,15 +313,14 @@ local function derive_accents(chosen, primary_hex, D)
     rosewater = 20,
   }
   -- reference color for s/l: the wallpaper primary if we have it, else the
-  -- slot's own default (keeps light/dark themes both sane). Richness target
-  -- tuned for READABILITY on the dark transparent bg: s85 keeps hues bold
-  -- and color-boosted (well above the pastel mocha defaults), l78 keeps
-  -- every hue bright enough to read (≥10:1) — s95/l68 was vivid but dropped
-  -- greens/blues to ~7.6:1, which read as dim on screen.
+  -- slot's own default (keeps light/dark themes both sane). Saturation
+  -- capped at 55 (user: s85+ reads as too bright/harsh) — soft, easy-on-the-
+  -- eyes hues close to stock catppuccin's own chroma; lightness 78 keeps
+  -- contrast ≥10:1 on the dark transparent bg.
   local ref = primary_hex or D.blue
   local base_hue = hsluv_hue(ref)
   local _, s, l = unpack(hsluv.hex_to_hsluv(ref))
-  s = math.min(s or 85, 85)
+  s = math.min(s or 55, 55)
   l = math.min(l or 80, 78)
   for slot, offset in pairs(OFFSETS) do
     if not chosen[slot] and ref then
@@ -338,15 +337,16 @@ local function build_overrides()
   -- palette couldn't provide (monochromatic wallpaper case), hue-spaced
   -- around the primary so no two code roles share a color
   derive_accents(A, A.blue, D)
-  -- Normalize EVERY accent (adopted + derived) to the same richness target:
-  -- s95 / l68 HSLUV. Adopted ones keep their natural hue but lose any
-  -- pastel wash (l80+) or gray muting (low s) — all 10 roles render equally
-  -- bold. Dark themes only; light themes keep guard-checked tokens as-is.
+  -- Normalize EVERY accent (adopted + derived) to the same softness target:
+  -- s55 / l78 HSLUV. Adopted ones keep their natural hue but lose any neon
+  -- oversaturation — all 10 roles render at the same gentle chroma (user:
+  -- saturation was too bright). Dark themes only; light themes keep
+  -- guard-checked tokens as-is.
   if not is_light_bg() then
     for slot, hex in pairs(A) do
       local h = hsluv_hue(hex)
       if h >= 0 then
-        A[slot] = hsluv.hsluv_to_hex { h, 95, 68 }
+        A[slot] = hsluv.hsluv_to_hex { h, 55, 78 }
       end
     end
   end
