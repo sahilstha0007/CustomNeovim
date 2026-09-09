@@ -8,7 +8,9 @@ selected=$(tmux list-sessions -F '#{session_name}' 2>/dev/null | fzf --prompt='s
 [[ -z $selected ]] && exit 0
 
 if [[ -n $TMUX ]]; then
-    tmux switch-client -t "$selected"
+    # switch-client errors if the target is the current session; tolerate it
+    current=$(tmux display-message -p '#{session_name}')
+    [[ $selected == "$current" ]] || tmux switch-client -t "$selected"
 else
     exec tmux attach -t "$selected"
 fi
