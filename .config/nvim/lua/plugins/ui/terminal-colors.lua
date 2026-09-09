@@ -89,6 +89,24 @@ local function mix(a, b, t)
   return '#' .. ch(ar, br) .. ch(ag, bg) .. ch(ab, bb)
 end
 
+-- Perceived luminance (0..1) of a '#rrggbb' color. The wallpaper decides the
+-- theme direction (matugen -m smart writes it into the palette): bright
+-- background -> light theme (dark text), dark -> dark theme (bright text).
+-- This mirrors the rule in wezterm's colors/custom.lua and tmux's
+-- colors-from-matugen.sh so all three flip together. (Defined before acc(),
+-- which needs it for its readability gate.)
+local function luminance(hex)
+  local r = tonumber(hex:sub(2, 3), 16) or 0
+  local g = tonumber(hex:sub(4, 5), 16) or 0
+  local b = tonumber(hex:sub(6, 7), 16) or 0
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255
+end
+
+local function is_light_bg()
+  local bg = pal.bg
+  return bg and bg:match '^#[%x][%x][%x][%x][%x][%x]$' and luminance(bg) >= 0.5
+end
+
 -- Saturation (0..1) of a '#rrggbb' color. Terminal palettes occasionally map
 -- accent slots to grays — ml4w's kitty theme uses #e0e2e8 for green AND cyan,
 -- which washes the whole UI out gray when adopted wholesale. We only adopt an
@@ -108,14 +126,30 @@ end
 -- Pick an accent from an ANSI pair (base + bright). Prefers the bright variant
 -- (terminals design those to read on dark backgrounds), falling back to the
 -- base variant when only that one is colorful. Returns nil when both are gray
--- — the caller then keeps catppuccin's own accent.
+-- or too dark to read on the adopted background — the caller then keeps
+-- catppuccin's own accent. (Same readability rule as tmux's guard(): a token
+-- darker than ~40% luminance vanishes into a dark bg. Saturation alone passed
+-- this wallpaper's dark olive success token as "green" code text.)
 local ACCENT_MIN_SAT = 0.2
 local function acc(idx, bright)
   local base, bv = pal.ansi[idx], pal.ansi[bright]
-  if bv and saturation(bv) >= ACCENT_MIN_SAT then
+  local dark_bg = not is_light_bg()
+  local function readable(hex)
+    if not hex then
+      return false
+    end
+    if dark_bg and luminance(hex) < 102 / 255 then
+      return false
+    end
+    if not dark_bg and luminance(hex) > 160 / 255 then
+      return false
+    end
+    return true
+  end
+  if readable(bv) and saturation(bv) >= ACCENT_MIN_SAT then
     return bv
   end
-  if base and saturation(base) >= ACCENT_MIN_SAT then
+  if readable(base) and saturation(base) >= ACCENT_MIN_SAT then
     return base
   end
   return nil
@@ -215,26 +249,6 @@ local LATTE_DEFAULTS = {
   flamingo = '#dd7878', rosewater = '#dc8a78',
 }
 
--- Perceived luminance (0..1) of a '#rrggbb' color. The wallpaper decides the
--- theme direction (matugen -m smart writes it into the palette): bright
--- background -> light theme (dark text), dark -> dark theme (bright text).
--- This mirrors the rule in wezterm's colors/custom.lua and tmux's
--- colors-from-matugen.sh so all three flip together.
-local function luminance(hex)
-  local r = tonumber(hex:sub(2, 3), 16) or 0
-  local g = tonumber(hex:sub(4, 5), 16) or 0
-  local b = tonumber(hex:sub(6, 7), 16) or 0
-  return (0.299 * r + 0.587 * g + 0.114 * b) / 255
-end
-
-local function is_light_bg()
-  local bg = pal.bg
-  return bg and bg:match '^#[%x][%x][%x][%x][%x][%x]$' and luminance(bg) >= 0.5
-end
-
--- Build catppuccin `color_overrides` from the collected terminal palette.
--- Falls back to catppuccin's own defaults (mocha for dark, latte for light)
--- for any slot we never learned.
 local function build_overrides()
   local D = is_light_bg() and LATTE_DEFAULTS or MOCHA_DEFAULTS
   local A = pick_accents()

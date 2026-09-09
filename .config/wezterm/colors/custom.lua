@@ -75,9 +75,31 @@ local latte = {
    crust     = '#dce0e8',
 }
 
+-- Readability guard — same rule as tmux's colors-from-matugen.sh (its
+-- guard() uses limits 102000/160000 on a 0..255000 luminance scale, i.e.
+-- 0.40 / 0.63 here). Wallpaper tokens can land below readable contrast on
+-- the theme background: this wallpaper's "success" token is a dark olive
+-- that vanished into the near-black bg and made code green unreadable in
+-- every CLI tool. A token failing the luminance gate falls back to the
+-- catppuccin base color for that slot. Keep in sync with colors-from-matugen.sh.
+local function guard(hex, fallback, light)
+   if not hex then
+      return fallback
+   end
+   local l = luminance(hex)
+   if light then
+      if l > 160 / 255 then -- lighter than ~63% vanishes into the paper
+         return fallback
+      end
+   elseif l < 102 / 255 then -- darker than ~40% vanishes into the glass
+      return fallback
+   end
+   return hex
+end
+
 -- Apply the wallpaper's matugen tokens over the chosen catppuccin base.
 -- Mirrored by ~/.config/tmux/colors-from-matugen.sh — keep in sync.
-local function apply_wallpaper(base, mat)
+local function apply_wallpaper(base, mat, light)
    local c = {}
    for k, v in pairs(base) do
       c[k] = v
@@ -86,13 +108,13 @@ local function apply_wallpaper(base, mat)
    c.base      = mat.background
    c.mantle    = mat.background
    c.crust     = mat.background
-   c.red       = mat.error
-   c.green     = mat.success
-   c.yellow    = mat.tertiary
-   c.blue      = mat.primary
-   c.pink      = mat.secondary
-   c.teal      = mat.primary
-   c.rosewater = mat.primary
+   c.red       = guard(mat.error, base.red, light)
+   c.green     = guard(mat.success, base.green, light)
+   c.yellow    = guard(mat.tertiary, base.yellow, light)
+   c.blue      = guard(mat.primary, base.blue, light)
+   c.pink      = guard(mat.secondary, base.pink, light)
+   c.teal      = guard(mat.primary, base.teal, light)
+   c.rosewater = guard(mat.primary, base.rosewater, light)
    c.surface0  = mat.surface0
    c.surface1  = mat.surface1
    c.surface2  = mat.surface2
@@ -104,8 +126,8 @@ local base = mocha -- fallback: stock catppuccin mocha if matugen never ran
 local ok, matugen = pcall(dofile, os.getenv('HOME') .. '/.config/wezterm/colors/matugen.lua')
 if ok and type(matugen) == 'table' and matugen.background then
    -- Bright wallpaper background -> light theme (latte), dark -> mocha.
-   base = luminance(matugen.background) >= 0.5 and latte or mocha
-   base = apply_wallpaper(base, matugen)
+   local light = luminance(matugen.background) >= 0.5
+   base = apply_wallpaper(light and latte or mocha, matugen, light)
 end
 
 -- '#rrggbb' -> 'rgba(r, g, b, a)' (alpha 0..1). Used for translucent chrome
