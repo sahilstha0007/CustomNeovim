@@ -313,16 +313,16 @@ local function derive_accents(chosen, primary_hex, D)
     rosewater = 20,
   }
   -- reference color for s/l: the wallpaper primary if we have it, else the
-  -- slot's own default (keeps light/dark themes both sane). "Darker" per
-  -- user = richer/more saturated: lightness capped at 68 (deep, not pastel)
-  -- while saturation is pushed to 95 — near-max chroma — so every token is
-  -- a bold, color-boosted, highly visible version of its hue. (s≈100 with
-  -- l68 clips at some hues; 95 stays on-gamut.)
+  -- slot's own default (keeps light/dark themes both sane). Richness target
+  -- tuned for READABILITY on the dark transparent bg: s85 keeps hues bold
+  -- and color-boosted (well above the pastel mocha defaults), l78 keeps
+  -- every hue bright enough to read (≥10:1) — s95/l68 was vivid but dropped
+  -- greens/blues to ~7.6:1, which read as dim on screen.
   local ref = primary_hex or D.blue
   local base_hue = hsluv_hue(ref)
   local _, s, l = unpack(hsluv.hex_to_hsluv(ref))
-  s = math.min(s or 95, 95)
-  l = math.min(l or 80, 68)
+  s = math.min(s or 85, 85)
+  l = math.min(l or 80, 78)
   for slot, offset in pairs(OFFSETS) do
     if not chosen[slot] and ref then
       chosen[slot] = hsluv.hsluv_to_hex { (base_hue + offset) % 360, s, l }
@@ -421,13 +421,11 @@ local function catppuccin_opts()
     },
     highlight_overrides = {
       [flavour] = function(c)
-        -- Overlay design (glassmorphism, translated from the design skills):
-        -- every float — snacks picker, which-key, hover docs, dressing,
-        -- completion — shares ONE colored language instead of a gray one. Bodies stay transparent (wallpaper glows through, winblend
-        -- frosts), rims are a luminous blue-tinted edge, and the selected row
-        -- is a raised blue-tinted pill.
+        -- Overlay design (full transparency edition): every float — snacks
+        -- picker, which-key, hover docs, dressing, completion — has a fully
+        -- transparent body; rims are a luminous blue-tinted edge; selected
+        -- rows are marked with bold + underline accent fg, never a fill.
         local rim = mix(c.surface2, c.blue, 0.35) -- luminous blue float border
-        local pill = mix(c.surface1, c.blue, 0.2) -- raised selection pill
         -- Octo's *Dark* tokens want a deeper tone on dark themes and a
         -- softened tone on light ones (same luminance rule as the rest).
         local darken = is_light_bg() and function(hex) return mix(hex, c.base, 0.45) end
@@ -447,26 +445,28 @@ local function catppuccin_opts()
           NvimTreeWinSeparator = { fg = c.surface1, bg = 'NONE' },
 
           -- Completion popup: FULL TRANSPARENCY (user preference) — body is
-          -- NONE like every other float; the selection pill + blue accent
-          -- keeps the active row readable over the wallpaper.
+          -- NONE like every other float; active row = blue bold underline.
           Pmenu      = { bg = 'NONE', fg = c.text },
-          PmenuSel   = { bg = pill, fg = c.blue, bold = true },
+          PmenuSel   = { bg = 'NONE', fg = c.blue, bold = true, underline = true },
+          PmenuMatchSel = { bg = 'NONE', fg = c.blue, bold = true },
+          PmenuKindSel = { bg = 'NONE', fg = c.blue, bold = true },
+          PmenuExtraSel = { bg = 'NONE', fg = c.text, bold = true },
           PmenuSbar  = { bg = 'NONE' },
           PmenuThumb = { bg = c.blue },
 
           -- blink.cmp overlays: FULL TRANSPARENCY — body NONE so the menu
-          -- floats directly over the wallpaper; the blue rim + selection
-          -- pill carry the structure.
+          -- floats directly over the wallpaper; active row = underline.
           BlinkCmpMenu          = { bg = 'NONE', fg = c.text },
           -- border bg pinned to transparent so the rounded corners read as
           -- clean curves over the wallpaper
           BlinkCmpMenuBorder    = { fg = rim, bg = 'NONE' },
           BlinkCmpMenuSelection = {
-            bg = pill,
-            fg = c.text,
+            bg = 'NONE',
+            fg = c.blue,
             bold = true,
+            underline = true,
           },
-          BlinkCmpScrollBarThumb  = { bg = mix(c.surface2, c.blue, 0.4) },
+          BlinkCmpScrollBarThumb  = { bg = c.blue },
           BlinkCmpScrollBarGutter = { bg = 'NONE' },
           BlinkCmpLabel         = { fg = c.text },
           BlinkCmpLabelMatch    = { fg = c.blue, bold = true },
@@ -486,16 +486,18 @@ local function catppuccin_opts()
           BlinkCmpKindText      = { fg = c.subtext0 },
           BlinkCmpKindProperty  = { fg = c.subtext0 },
 
-          -- contrast polish for dim palettes
-          Search      = { bg = c.blue, fg = c.base },
-          Visual      = { bg = c.surface1 },
-          MatchParen  = { bg = c.surface1, fg = c.blue, bold = true },
+          -- contrast polish — underline/fg based, no filled boxes (full
+          -- transparency: wallpaper visible through everything)
+          Search      = { bg = 'NONE', fg = c.blue, bold = true, underline = true },
+          CurSearch   = { bg = 'NONE', fg = c.yellow, bold = true, underline = true },
+          Visual      = { bg = 'NONE', fg = c.text, bold = true },
+          MatchParen  = { bg = 'NONE', fg = c.blue, bold = true, underline = true },
+          IncSearch   = { bg = 'NONE', fg = c.peach, bold = true, underline = true },
           WinSeparator = { fg = c.surface1 },
 
-          -- Active line: faint surface tint (kept — it's the only body
-          -- tint left; without it the cursor row is hard to find on a
-          -- fully transparent editor). Line number lifts to blue+bold.
-          CursorLine   = { bg = mix(c.base, c.surface0, 0.5) },
+          -- Active line: NO bg (full transparency) — the cursor row is
+          -- marked by the blue bold line number alone.
+          CursorLine   = { bg = 'NONE' },
           CursorLineNr = { fg = c.blue, bold = true },
 
           -- Floating windows (hover, diagnostics popup, dressing, which-key):
@@ -509,7 +511,7 @@ local function catppuccin_opts()
           -- -----------------------------------------------------------------
           -- Snacks picker — the single picker (telescope removed)
           -- -----------------------------------------------------------------
-          SnacksPickerSelected = { bg = pill, fg = c.text, bold = true },
+          SnacksPickerSelected = { bg = 'NONE', fg = c.blue, bold = true, underline = true },
           SnacksPickerMatch = { fg = c.blue, bold = true },
           SnacksPickerPrompt = { fg = c.flamingo },
           SnacksPickerTitle = { fg = c.blue, bg = 'NONE' },
@@ -518,16 +520,14 @@ local function catppuccin_opts()
           SnacksPickerPreviewTitle = { fg = c.green, bg = 'NONE' },
 
           -- -----------------------------------------------------------------
-          -- Notifications — colored glass cards, one hue per level
+          -- Notifications — accent-colored text, transparent body
           -- -----------------------------------------------------------------
-          -- Body is a faint tint of the level color (readable text on top);
-          -- catppuccin already paints the icon/title/border in the full
-          -- level color, so each card reads as a tinted glass chip.
-          SnacksNotifierInfo  = { fg = c.text, bg = mix(c.base, c.blue, 0.1) },
-          SnacksNotifierWarn  = { fg = c.text, bg = mix(c.base, c.yellow, 0.08) },
-          SnacksNotifierError = { fg = c.text, bg = mix(c.base, c.red, 0.08) },
-          SnacksNotifierDebug = { fg = c.text, bg = mix(c.base, c.peach, 0.08) },
-          SnacksNotifierTrace = { fg = c.text, bg = mix(c.base, c.rosewater, 0.08) },
+          -- Notifications — accent-colored text, transparent body
+          SnacksNotifierInfo  = { fg = c.blue },
+          SnacksNotifierWarn  = { fg = c.yellow },
+          SnacksNotifierError = { fg = c.red },
+          SnacksNotifierDebug = { fg = c.peach },
+          SnacksNotifierTrace = { fg = c.rosewater },
 
           -- -----------------------------------------------------------------
           -- Octo — GitHub issues/PRs/discussions (gh CLI backend)
