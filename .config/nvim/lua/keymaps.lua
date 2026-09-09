@@ -41,8 +41,9 @@ keymap.set('n', '<C-Right>', '<cmd>vertical resize +2<CR>', { desc = 'Increase W
 -- so use <Esc><Esc> to truly leave insert mode.
 keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
--- Diagnostics: unimpaired-style ]d/[d next/prev, wrapping at the ends
--- (see resilient_nav below for the same pattern used on quickfix).
+-- Diagnostics: unimpaired-style ]d/[d next/prev. vim.diagnostic.jump
+-- wraps at the ends by default (wrap=true), so cycling never dead-ends —
+-- the same UX as resilient_nav below, without the pcall dance.
 keymap.set('n', ']d', function()
   vim.diagnostic.jump({ count = 1, float = true })
 end, { desc = 'Next Diagnostic' })
