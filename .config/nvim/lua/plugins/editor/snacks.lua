@@ -50,6 +50,11 @@ return {
     { '<C-_>',       function() Snacks.terminal.toggle() end, mode = { 'n', 't' }, desc = 'Terminal (toggle)' },
     { '<leader>ft',  function() Snacks.terminal.toggle() end, desc = 'Terminal (toggle, cwd)' },
     { '<leader>fT',  function() Snacks.terminal.toggle(nil, { cwd = Snacks.git.get_root() }) end, desc = 'Terminal (toggle, git root)' },
+    -- zen mode: distraction-free zoom (toggles back on Esc or <leader>z)
+    { '<leader>z',  function() Snacks.zen() end, desc = 'Zen Mode (toggle)' },
+    { '<leader>Z',  function() Snacks.zen.zoom() end, desc = 'Zoom (window only)' },
+    -- gitbrowse: open current file/line on GitHub (what's selected on remote)
+    { '<leader>gB', function() Snacks.gitbrowse() end, desc = 'Open on GitHub (gitbrowse)' },
     { '<leader>s"',  function() Snacks.picker.registers() end, desc = 'Registers' },
     { '<leader>sa',  function() Snacks.picker.autocmds() end, desc = 'Auto Commands' },
     { '<leader>sb',  function() Snacks.picker.lines() end, desc = 'Buffer' },
@@ -121,8 +126,23 @@ return {
       dim = { enabled = true },
       -- thin indent guides
       indent = { enabled = true },
+      -- big files: auto-disable treesitter/LSP/etc above ~1.5MB —
+      -- opening a 100k-line lockfile or minified bundle stops choking
+      bigfile = { enabled = true },
       -- fancy notifications (replaces vim.notify)
       notifier = { enabled = true },
+      -- quick scope/func context via <leader>z — distraction-free coding
+      -- (deactivates indent/dim temporarily; snacks handles restore)
+      zen = { enabled = true },
+      -- gitbrowse: open the file/line under cursor on GitHub (gh CLI era
+      -- companion to octo) — <leader>gB picks remote, copies URL too
+      gitbrowse = { enabled = true },
+      -- statuscolumn: fold signs + git signs + diagnostic signs inline
+      -- (pairs with ufo's foldtext; lualine stays the statusline)
+      statuscolumn = { enabled = true },
+      -- vim.ui.input via snacks (readline-style, snacks-styled); picks
+      -- still go through snacks.picker. dressing stays for ui.select only.
+      input = { enabled = true },
       picker = { enabled = true },
       -- smooth scrolling
       scroll = { enabled = true },

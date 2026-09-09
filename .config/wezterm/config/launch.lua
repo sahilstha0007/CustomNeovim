@@ -30,9 +30,10 @@ elseif platform.is_mac then
 elseif platform.is_linux then
    options.default_prog = { 'zsh', '-l' }
    options.launch_menu = {
+      { label = 'Zsh', args = { 'zsh', '-l' } },
       { label = 'Bash', args = { 'bash', '-l' } },
       { label = 'Fish', args = { 'fish', '-l' } },
-      { label = 'Zsh', args = { 'zsh', '-l' } },
+      { label = 'tmux (attach or start)', args = { 'zsh', '-l', '-c', 'tmux attach 2>/dev/null || tmux new' } },
    }
 end
 
