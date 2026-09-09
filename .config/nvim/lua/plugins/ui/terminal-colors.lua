@@ -433,43 +433,35 @@ local function catppuccin_opts()
           NvimTreeEndOfBuffer  = { bg = 'NONE' },
           NvimTreeWinSeparator = { fg = c.surface1, bg = 'NONE' },
 
-          -- Completion popup: frosted, never fully transparent — a completion
-          -- list overlays the code you're typing, so bg NONE (inheriting the
-          -- transparent editor Normal) made it look like a broken see-through
-          -- box while writing. The body is a faint blue-tinted glass (not
-          -- gray surface0) and the selected row lifts as the blue pill.
-          Pmenu      = { bg = mix(c.surface0, c.blue, 0.06), fg = c.text },
+          -- Completion popup: FULL TRANSPARENCY (user preference) — body is
+          -- NONE like every other float; the selection pill + blue accent
+          -- keeps the active row readable over the wallpaper.
+          Pmenu      = { bg = 'NONE', fg = c.text },
           PmenuSel   = { bg = pill, fg = c.blue, bold = true },
-          PmenuSbar  = { bg = mix(c.surface0, c.blue, 0.06) },
+          PmenuSbar  = { bg = 'NONE' },
           PmenuThumb = { bg = c.blue },
 
-          -- blink.cmp overlays: frosted glass with a blue-tinted rim. The
-          -- menu MUST have a real background — its window maps Normal →
-          -- BlinkCmpMenu, so without a bg here it inherits the transparent
-          -- editor Normal and the candidate list floats unreadably over the
-          -- code. surface0 + the window's own winblend (25) reads as frosted
-          -- glass: readable, but the wallpaper still glows through. The
-          -- border lifts a whisper of blue so the rounded corners read as a
-          -- glass edge instead of vanishing into the dark.
-          BlinkCmpMenu          = { bg = c.surface0, fg = c.text },
-          -- border bg pinned to the menu body so the rounded corners read as
-          -- clean curves, not dark notches (default linked to Pmenu's darker
-          -- bg would paint the corner cells)
-          BlinkCmpMenuBorder    = { fg = rim, bg = mix(c.surface0, c.blue, 0.06) },
+          -- blink.cmp overlays: FULL TRANSPARENCY — body NONE so the menu
+          -- floats directly over the wallpaper; the blue rim + selection
+          -- pill carry the structure.
+          BlinkCmpMenu          = { bg = 'NONE', fg = c.text },
+          -- border bg pinned to transparent so the rounded corners read as
+          -- clean curves over the wallpaper
+          BlinkCmpMenuBorder    = { fg = rim, bg = 'NONE' },
           BlinkCmpMenuSelection = {
             bg = pill,
             fg = c.text,
             bold = true,
           },
           BlinkCmpScrollBarThumb  = { bg = mix(c.surface2, c.blue, 0.4) },
-          BlinkCmpScrollBarGutter = { bg = mix(c.surface0, c.blue, 0.06) },
+          BlinkCmpScrollBarGutter = { bg = 'NONE' },
           BlinkCmpLabel         = { fg = c.text },
           BlinkCmpLabelMatch    = { fg = c.blue, bold = true },
           BlinkCmpLabelDetail   = { fg = c.overlay1 },
-          BlinkCmpDoc           = { bg = mix(c.surface0, c.blue, 0.06) },
-          BlinkCmpDocBorder     = { fg = rim, bg = mix(c.surface0, c.blue, 0.06) },
-          BlinkCmpSignatureHelp = { bg = mix(c.surface0, c.blue, 0.06) },
-          BlinkCmpSignatureHelpBorder = { fg = rim, bg = mix(c.surface0, c.blue, 0.06) },
+          BlinkCmpDoc           = { bg = 'NONE' },
+          BlinkCmpDocBorder     = { fg = rim, bg = 'NONE' },
+          BlinkCmpSignatureHelp = { bg = 'NONE' },
+          BlinkCmpSignatureHelpBorder = { fg = rim, bg = 'NONE' },
           BlinkCmpGhostText     = { fg = c.overlay0 },
           BlinkCmpKindFunction  = { fg = c.blue },
           BlinkCmpKindMethod    = { fg = c.blue },
@@ -487,8 +479,9 @@ local function catppuccin_opts()
           MatchParen  = { bg = c.surface1, fg = c.blue, bold = true },
           WinSeparator = { fg = c.surface1 },
 
-          -- Active line: faint surface tint, and the line number lifts to
-          -- blue+bold so the cursor row is instantly findable.
+          -- Active line: faint surface tint (kept — it's the only body
+          -- tint left; without it the cursor row is hard to find on a
+          -- fully transparent editor). Line number lifts to blue+bold.
           CursorLine   = { bg = mix(c.base, c.surface0, 0.5) },
           CursorLineNr = { fg = c.blue, bold = true },
 

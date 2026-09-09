@@ -90,10 +90,11 @@ vim.o.winborder = 'rounded'
 -- Frosted glass: floating windows (snacks picker, hover docs, dressing,
 -- trouble) and the completion menu blend toward the wallpaper behind them
 -- instead of painting opaque boxes. 0 = opaque, 100 = fully see-through.
--- The editor bg itself is transparent via catppuccin's
--- transparent_background; these two options frost everything on top of it.
-vim.opt.winblend = 25
-vim.opt.pumblend = 20
+-- FULL TRANSPARENCY (user preference): winblend low so float bodies barely
+-- frost at all; the editor bg itself is transparent via catppuccin's
+-- transparent_background.
+vim.opt.winblend = 10
+vim.opt.pumblend = 10
 
 -- No "Press ENTER or type command to continue" pauses: long messages scroll
 -- through instead of blocking the editor. Full history still in :messages.

@@ -221,17 +221,18 @@ function BackDrops:_gen_opts()
          hsb = { brightness = 0.82, saturation = 1.0 },
       })
       -- flat frost wash — the single knob that decides how much "glass"
-      -- vs. flat dark you get. 0.8 buries the wallpaper (everything reads
-      -- near-opaque); 0.5 is all-glass but soft for code; 0.72 let too much
-      -- wallpaper bleed through behind characters — text looked dim.
-      -- 0.82: strong dark backing for code, wallpaper still glows through.
+      -- vs. flat dark you get. 0.82 was the strong-dark readability pass;
+      -- user preference: FULL transparency — the wezterm window itself now
+      -- renders with window_background_opacity (appearance.lua) so the
+      -- DESKTOP wallpaper shows through, and this wash is only a light tint
+      -- (0.45) that keeps text off the busy parts of the image.
       table.insert(bg_opts, {
          source = { Color = colors.background },
          height = '120%',
          width = '120%',
          vertical_offset = '-10%',
          horizontal_offset = '-10%',
-         opacity = 0.82,
+         opacity = 0.45,
       })
       -- soft bottom-up fade for depth + tab/status bar legibility. Ends in
       -- TRANSPARENT of the theme background (not a fixed dark), so the chrome
