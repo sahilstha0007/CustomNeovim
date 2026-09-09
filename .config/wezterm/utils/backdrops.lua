@@ -210,29 +210,28 @@ function BackDrops:_gen_opts()
    local bg_opts = {}
 
    if #self.images > 0 then
-      -- wallpaper — the GLASS itself: kept bright enough to read as a
-      -- wallpaper feature through every translucent surface (nvim editor,
-      -- shell panes, tmux status, pickers). Bump `brightness` up if text
-      -- feels lost on busy images.
+      -- wallpaper — the GLASS itself: dimmed (0.82) so bright code text
+      -- keeps high contrast; the image still reads as a wallpaper feature
+      -- through every translucent surface. Raise if the desktop feels too
+      -- dark; lower further if text feels lost on busy images.
       table.insert(bg_opts, {
          -- display copy when cached (fast decode); original while warming
          source = { File = display_path(self.images[self.current_idx]) },
          horizontal_align = 'Center',
-         hsb = { brightness = 0.93, saturation = 1.0 },
+         hsb = { brightness = 0.82, saturation = 1.0 },
       })
       -- flat frost wash — the single knob that decides how much "glass"
       -- vs. flat dark you get. 0.8 buries the wallpaper (everything reads
-      -- near-opaque); 0.5 is all-glass but soft for code; 0.62 let a busy
-      -- wallpaper bleed through ~38% behind every character, which read as
-      -- dim text. 0.72 keeps the wallpaper clearly glowing through while
-      -- text sits on real glass.
+      -- near-opaque); 0.5 is all-glass but soft for code; 0.72 let too much
+      -- wallpaper bleed through behind characters — text looked dim.
+      -- 0.82: strong dark backing for code, wallpaper still glows through.
       table.insert(bg_opts, {
          source = { Color = colors.background },
          height = '120%',
          width = '120%',
          vertical_offset = '-10%',
          horizontal_offset = '-10%',
-         opacity = 0.72,
+         opacity = 0.82,
       })
       -- soft bottom-up fade for depth + tab/status bar legibility. Ends in
       -- TRANSPARENT of the theme background (not a fixed dark), so the chrome

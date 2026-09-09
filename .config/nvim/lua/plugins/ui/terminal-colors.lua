@@ -335,6 +335,11 @@ local function catppuccin_opts()
         local darken = is_light_bg() and function(hex) return mix(hex, c.base, 0.45) end
           or function(hex) return mix(hex, '#000000', 0.45) end
         return {
+          -- Comments: catppuccin uses overlay0 (#6c7086, ~3.8:1 on this
+          -- background) which reads as barely-there gray. overlay1 keeps
+          -- the "receded" feel but clears the WCAG AA bar (~4.9:1).
+          Comment = { fg = c.overlay1, italic = true },
+
           -- Explorer blends with terminal. nvim-tree.lua is the active tree
           -- (neo-tree is disabled in editor/disable-neotree.lua), so these are
           -- NvimTree* groups; catppuccin's nvimtree integration themes the rest.

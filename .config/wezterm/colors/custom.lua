@@ -104,7 +104,17 @@ local function apply_wallpaper(base, mat, light)
    for k, v in pairs(base) do
       c[k] = v
    end
-   c.text      = mat.foreground
+   c.text      = guard(mat.foreground, base.text, light)
+   -- Brighten text toward near-white (same hue family): the darker frost
+   -- wash (0.82) behind code demands a brighter fg for comfortable reading.
+   -- Blend 60% toward white on dark themes; leave light themes untouched.
+   if not light and c.text then
+      local function ch(i)
+         local v = tonumber(c.text:sub(i, i + 1), 16) or 0
+         return string.format('%02x', math.floor(v + (255 - v) * 0.6 + 0.5))
+      end
+      c.text = '#' .. ch(2) .. ch(4) .. ch(6)
+   end
    c.base      = mat.background
    c.mantle    = mat.background
    c.crust     = mat.background
